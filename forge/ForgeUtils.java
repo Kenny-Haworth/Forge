@@ -1,10 +1,12 @@
 package forge;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TimerTask;
@@ -21,6 +23,61 @@ public final class ForgeUtils
      * A private constructor to prevent instantiation of this class.
      */
     private ForgeUtils() {}
+
+    /**
+     * Returns the MD5 checksum of the given file.
+     *
+     * @param file The file to get the checksum of
+     * @return An MD5 checksum String
+     * @throws Exception If an error occurs getting the checksum
+     */
+    public static String getMD5Sum(String file) throws Exception
+    {
+        try (FileInputStream in = new FileInputStream(file))
+        {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            byte[] byteArray = new byte[1024];
+            int bytesCount;
+
+            while ((bytesCount = in.read(byteArray)) != -1)
+            {
+                md.update(byteArray, 0, bytesCount);
+            }
+
+            StringBuilder builder = new StringBuilder();
+            for (byte bite : md.digest())
+            {
+                builder.append(String.format("%02x", bite));
+            }
+
+            return builder.toString();
+        }
+    }
+
+    /**
+     * Returns the MD5 checksum of the given file.
+     *
+     * @param file The file to get the checksum of
+     * @return An MD5 checksum String
+     * @throws Exception If an error occurs getting the checksum
+     */
+    public static String getMD5Sum(File file) throws Exception
+    {
+        return getMD5Sum(file.getAbsolutePath());
+    }
+
+    /**
+     * Returns the MD5 checksum of the given file.
+     *
+     * @param file The file to get the checksum of
+     * @return An MD5 checksum String
+     * @throws Exception If an error occurs getting the checksum
+     */
+    public static String getMD5Sum(Path file) throws Exception
+    {
+        return getMD5Sum(file.toString());
+    }
 
     /**
      * Allows the user of lambda expressions when constructing TimerTasks.
