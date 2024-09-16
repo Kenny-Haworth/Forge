@@ -6,7 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.List;
 import java.util.TimerTask;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -14,6 +17,11 @@ import java.util.stream.Stream;
  */
 public final class ForgeUtils
 {
+    /**
+     * A private constructor to prevent instantiation of this class.
+     */
+    private ForgeUtils() {}
+
     /**
      * Allows the user of lambda expressions when constructing TimerTasks.
      *
@@ -30,6 +38,48 @@ public final class ForgeUtils
                 runnable.run();
             }
         };
+    }
+
+    /**
+     * Returns a list of all files in the given directory.
+     *
+     * The search is recursive.
+     *
+     * @param directory The directory to search for files in
+     */
+    public static List<File> getFileList(String directory) throws IOException
+    {
+        return getFileList(Paths.get(directory));
+    }
+
+    /**
+     * Returns a list of all files in the given directory.
+     *
+     * The search is recursive.
+     *
+     * @param directory The directory to search for files in
+     */
+    public static List<File> getFileList(File directory) throws IOException
+    {
+        return getFileList(directory.toPath());
+    }
+
+    /**
+     * Returns a list of all files in the given directory.
+     *
+     * The search is recursive.
+     *
+     * @param directory The directory to search for files in
+     */
+    public static List<File> getFileList(Path directory) throws IOException
+    {
+        try (Stream<Path> stream = Files.walk(directory))
+        {
+            return stream.sorted(Comparator.reverseOrder())
+                         .map(Path::toFile)
+                         .filter(Predicate.not(File::isDirectory))
+                         .collect(Collectors.toList());
+        }
     }
 
     /**
