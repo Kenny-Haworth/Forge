@@ -3,6 +3,7 @@ package forge;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -103,6 +104,7 @@ public final class ForgeUtils
      * The search is recursive.
      *
      * @param directory The directory to search for files in
+     * @throws IOException If an error occurs searching the given directory
      */
     public static List<File> getFileList(String directory) throws IOException
     {
@@ -115,6 +117,7 @@ public final class ForgeUtils
      * The search is recursive.
      *
      * @param directory The directory to search for files in
+     * @throws IOException If an error occurs searching the given directory
      */
     public static List<File> getFileList(File directory) throws IOException
     {
@@ -127,6 +130,7 @@ public final class ForgeUtils
      * The search is recursive.
      *
      * @param directory The directory to search for files in
+     * @throws IOException If an error occurs searching the given directory
      */
     public static List<File> getFileList(Path directory) throws IOException
     {
@@ -136,6 +140,45 @@ public final class ForgeUtils
                          .map(Path::toFile)
                          .filter(Predicate.not(File::isDirectory))
                          .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * Returns true if the given directory is empty, false otherwise.
+     *
+     * @param directory The directory to check for emptiness
+     * @return True if the given directory is empty, false otherwise
+     * @throws IOException If an error occurs checking the directory
+     */
+    public static boolean isDirectoryEmpty(String directory) throws IOException
+    {
+        return isDirectoryEmpty(Paths.get(directory));
+    }
+
+    /**
+     * Returns true if the given directory is empty, false otherwise.
+     *
+     * @param directory The directory to check for emptiness
+     * @return True if the given directory is empty, false otherwise
+     * @throws IOException If an error occurs checking the directory
+     */
+    public static boolean isDirectoryEmpty(File directory) throws IOException
+    {
+        return isDirectoryEmpty(directory.toPath());
+    }
+
+    /**
+     * Returns true if the given directory is empty, false otherwise.
+     *
+     * @param directory The directory to check for emptiness
+     * @return True if the given directory is empty, false otherwise
+     * @throws IOException If an error occurs checking the directory
+     */
+    public static boolean isDirectoryEmpty(Path directory) throws IOException
+    {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory))
+        {
+            return !stream.iterator().hasNext();
         }
     }
 
