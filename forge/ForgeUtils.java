@@ -101,7 +101,7 @@ public final class ForgeUtils
     /**
      * Returns a list of all files in the given directory.
      *
-     * The search is recursive.
+     * The search is recursive and directories are excluded.
      *
      * @param directory The directory to search for files in
      * @throws IOException If an error occurs searching the given directory
@@ -114,7 +114,7 @@ public final class ForgeUtils
     /**
      * Returns a list of all files in the given directory.
      *
-     * The search is recursive.
+     * The search is recursive and directories are excluded.
      *
      * @param directory The directory to search for files in
      * @throws IOException If an error occurs searching the given directory
@@ -127,7 +127,7 @@ public final class ForgeUtils
     /**
      * Returns a list of all files in the given directory.
      *
-     * The search is recursive.
+     * The search is recursive and directories are excluded.
      *
      * @param directory The directory to search for files in
      * @throws IOException If an error occurs searching the given directory
@@ -139,6 +139,50 @@ public final class ForgeUtils
             return stream.sorted(Comparator.reverseOrder())
                          .map(Path::toFile)
                          .filter(Predicate.not(File::isDirectory))
+                         .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * Returns a list of all files and directories in the given directory.
+     *
+     * The search is recursive.
+     *
+     * @param directory The directory to search for files in
+     * @throws IOException If an error occurs searching the given directory
+     */
+    public static List<File> getAllFilesList(String directory) throws IOException
+    {
+        return getAllFilesList(Paths.get(directory));
+    }
+
+    /**
+     * Returns a list of all files and directories in the given directory.
+     *
+     * The search is recursive.
+     *
+     * @param directory The directory to search for files in
+     * @throws IOException If an error occurs searching the given directory
+     */
+    public static List<File> getAllFilesList(File directory) throws IOException
+    {
+        return getAllFilesList(directory.toPath());
+    }
+
+    /**
+     * Returns a list of all files and directories in the given directory.
+     *
+     * The search is recursive.
+     *
+     * @param directory The directory to search for files in
+     * @throws IOException If an error occurs searching the given directory
+     */
+    public static List<File> getAllFilesList(Path directory) throws IOException
+    {
+        try (Stream<Path> stream = Files.walk(directory))
+        {
+            return stream.sorted(Comparator.reverseOrder())
+                         .map(Path::toFile)
                          .collect(Collectors.toList());
         }
     }
