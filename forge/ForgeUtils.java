@@ -99,6 +99,54 @@ public final class ForgeUtils
     }
 
     /**
+     * Returns a list of all subdirectories in the given directory.
+     *
+     * The search is recursive and files are excluded.
+     *
+     * @param directory The directory to search for subdirectories
+     * @return A list of all subdirectories in the given directory
+     * @throws IOException If getting the subdirectories fails
+     */
+    public static List<File> getSubdirectories(String directory) throws IOException
+    {
+        return getSubdirectories(Paths.get(directory));
+    }
+
+    /**
+     * Returns a list of all subdirectories in the given directory.
+     *
+     * The search is recursive and files are excluded.
+     *
+     * @param directory The directory to search for subdirectories
+     * @return A list of all subdirectories in the given directory
+     * @throws IOException If getting the subdirectories fails
+     */
+    public static List<File> getSubdirectories(File directory) throws IOException
+    {
+        return getSubdirectories(directory.toPath());
+    }
+
+    /**
+     * Returns a list of all subdirectories in the given directory.
+     *
+     * The search is recursive and files are excluded.
+     *
+     * @param directory The directory to search for subdirectories
+     * @return A list of all subdirectories in the given directory
+     * @throws IOException If getting the subdirectories fails
+     */
+    public static List<File> getSubdirectories(Path directory) throws IOException
+    {
+        try (Stream<Path> stream = Files.walk(directory))
+        {
+            return stream.sorted(Comparator.reverseOrder())
+                         .map(Path::toFile)
+                         .filter(File::isDirectory)
+                         .collect(Collectors.toList());
+        }
+    }
+
+    /**
      * Returns a list of all files in the given directory.
      *
      * The search is recursive and directories are excluded.
