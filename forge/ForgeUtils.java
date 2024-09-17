@@ -32,15 +32,14 @@ public final class ForgeUtils
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
-    public static String getMD5Sum(String file) throws Exception
+    public static String md5Sum(String file) throws Exception
     {
         try (FileInputStream in = new FileInputStream(file))
         {
             MessageDigest md = MessageDigest.getInstance("MD5");
-
             byte[] byteArray = new byte[1024];
-            int bytesCount;
 
+            int bytesCount;
             while ((bytesCount = in.read(byteArray)) != -1)
             {
                 md.update(byteArray, 0, bytesCount);
@@ -63,9 +62,9 @@ public final class ForgeUtils
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
-    public static String getMD5Sum(File file) throws Exception
+    public static String md5Sum(File file) throws Exception
     {
-        return getMD5Sum(file.getAbsolutePath());
+        return md5Sum(file.getAbsolutePath());
     }
 
     /**
@@ -75,9 +74,9 @@ public final class ForgeUtils
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
-    public static String getMD5Sum(Path file) throws Exception
+    public static String md5Sum(Path file) throws Exception
     {
-        return getMD5Sum(file.toString());
+        return md5Sum(file.toString());
     }
 
     /**
@@ -152,11 +151,12 @@ public final class ForgeUtils
      * The search is recursive and directories are excluded.
      *
      * @param directory The directory to search for files in
+     * @return A list of all files in the given directory
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getFileList(String directory) throws IOException
+    public static List<File> getFiles(String directory) throws IOException
     {
-        return getFileList(Paths.get(directory));
+        return getFiles(Paths.get(directory));
     }
 
     /**
@@ -165,11 +165,12 @@ public final class ForgeUtils
      * The search is recursive and directories are excluded.
      *
      * @param directory The directory to search for files in
+     * @return A list of all files in the given directory
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getFileList(File directory) throws IOException
+    public static List<File> getFiles(File directory) throws IOException
     {
-        return getFileList(directory.toPath());
+        return getFiles(directory.toPath());
     }
 
     /**
@@ -178,9 +179,10 @@ public final class ForgeUtils
      * The search is recursive and directories are excluded.
      *
      * @param directory The directory to search for files in
+     * @return A list of all files in the given directory
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getFileList(Path directory) throws IOException
+    public static List<File> getFiles(Path directory) throws IOException
     {
         try (Stream<Path> stream = Files.walk(directory))
         {
@@ -199,9 +201,9 @@ public final class ForgeUtils
      * @param directory The directory to search for files in
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getAllFilesList(String directory) throws IOException
+    public static List<File> getAllFiles(String directory) throws IOException
     {
-        return getAllFilesList(Paths.get(directory));
+        return getAllFiles(Paths.get(directory));
     }
 
     /**
@@ -212,9 +214,9 @@ public final class ForgeUtils
      * @param directory The directory to search for files in
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getAllFilesList(File directory) throws IOException
+    public static List<File> getAllFiles(File directory) throws IOException
     {
-        return getAllFilesList(directory.toPath());
+        return getAllFiles(directory.toPath());
     }
 
     /**
@@ -225,7 +227,7 @@ public final class ForgeUtils
      * @param directory The directory to search for files in
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getAllFilesList(Path directory) throws IOException
+    public static List<File> getAllFiles(Path directory) throws IOException
     {
         try (Stream<Path> stream = Files.walk(directory))
         {
