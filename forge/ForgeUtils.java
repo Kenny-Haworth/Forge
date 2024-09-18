@@ -32,6 +32,30 @@ public final class ForgeUtils
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
+    public static String md5Sum(File file) throws Exception
+    {
+        return md5Sum(file.getAbsolutePath());
+    }
+
+    /**
+     * Returns the MD5 checksum of the given file.
+     *
+     * @param file The file to get the checksum of
+     * @return An MD5 checksum String
+     * @throws Exception If an error occurs getting the checksum
+     */
+    public static String md5Sum(Path file) throws Exception
+    {
+        return md5Sum(file.toString());
+    }
+
+    /**
+     * Returns the MD5 checksum of the given file.
+     *
+     * @param file The file to get the checksum of
+     * @return An MD5 checksum String
+     * @throws Exception If an error occurs getting the checksum
+     */
     public static String md5Sum(String file) throws Exception
     {
         try (FileInputStream in = new FileInputStream(file))
@@ -53,30 +77,6 @@ public final class ForgeUtils
 
             return builder.toString();
         }
-    }
-
-    /**
-     * Returns the MD5 checksum of the given file.
-     *
-     * @param file The file to get the checksum of
-     * @return An MD5 checksum String
-     * @throws Exception If an error occurs getting the checksum
-     */
-    public static String md5Sum(File file) throws Exception
-    {
-        return md5Sum(file.getAbsolutePath());
-    }
-
-    /**
-     * Returns the MD5 checksum of the given file.
-     *
-     * @param file The file to get the checksum of
-     * @return An MD5 checksum String
-     * @throws Exception If an error occurs getting the checksum
-     */
-    public static String md5Sum(Path file) throws Exception
-    {
-        return md5Sum(file.toString());
     }
 
     /**
@@ -282,14 +282,9 @@ public final class ForgeUtils
      * @param directory The directory to delete
      * @throws IOException If deleting the directory fails
      */
-    public static void deleteDir(Path directory) throws IOException
+    public static void deleteDir(String directory) throws IOException
     {
-        try (Stream<Path> stream = Files.walk(directory))
-        {
-            stream.sorted(Comparator.reverseOrder())
-                  .map(Path::toFile)
-                  .forEach(File::delete);
-        }
+        deleteDir(Paths.get(directory));
     }
 
     /**
@@ -300,13 +295,10 @@ public final class ForgeUtils
      */
     public static void deleteDir(File directory) throws IOException
     {
-        try (Stream<Path> stream = Files.walk(directory.toPath()))
-        {
-            stream.sorted(Comparator.reverseOrder())
-                  .map(Path::toFile)
-                  .forEach(File::delete);
-        }
+        deleteDir(directory.toPath());
     }
+
+
 
     /**
      * Deletes the given directory.
@@ -314,9 +306,9 @@ public final class ForgeUtils
      * @param directory The directory to delete
      * @throws IOException If deleting the directory fails
      */
-    public static void deleteDir(String directory) throws IOException
+    public static void deleteDir(Path directory) throws IOException
     {
-        try (Stream<Path> stream = Files.walk(Paths.get(directory)))
+        try (Stream<Path> stream = Files.walk(directory))
         {
             stream.sorted(Comparator.reverseOrder())
                   .map(Path::toFile)
