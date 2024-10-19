@@ -30,14 +30,27 @@ public final class StopWatch
     /**
      * Prints the time elapsed in a human-readable format.
      *
-     * @param timeUnit For TimeUnits with a precision smaller than seconds (NANOSECONDS, MICROSECONDS, MILLISECONDS),
-     *                 prints the time elapsed in the given TimeUnit's precision. For larger units (SECONDS, MINUTES,
-     *                 HOURS, DAYS), prints a breakdown of days, hours, minutes, and seconds.
+     * The displayed precision will be based upon the time elapsed.
      */
-    public void printTimeElapsed(TimeUnit timeUnit)
+    public void printTimeElapsed()
     {
-        long timeElapsed = System.nanoTime() - time;
+        long timeElapsed = System.nanoTime() - this.time;
         System.out.print("Time elapsed: ");
+
+        //determine a suitable TimeUnit to use
+        TimeUnit timeUnit;
+        if (timeElapsed < 1e8) //less than 100 milliseconds
+        {
+            timeUnit = TimeUnit.NANOSECONDS;
+        }
+        else if (timeElapsed < 1e9) //less than 1 second
+        {
+            timeUnit = TimeUnit.MILLISECONDS;
+        }
+        else
+        {
+            timeUnit = TimeUnit.SECONDS;
+        }
 
         switch (timeUnit)
         {
@@ -56,7 +69,18 @@ public final class StopWatch
                 if (days > 0) System.out.print(days + " days ");
                 if (days > 0 || hours > 0) System.out.print(hours + " hours ");
                 if (days > 0 || hours > 0 || minutes > 0) System.out.print(minutes + " minutes ");
-                System.out.println(seconds + " seconds");
+
+                //print fractional seconds for closer comparisons
+                long totalSeconds = TimeUnit.SECONDS.convert(timeElapsed, TimeUnit.NANOSECONDS);
+                if (totalSeconds < 50)
+                {
+                    double fractionalSeconds = timeElapsed % TimeUnit.NANOSECONDS.convert(1, TimeUnit.SECONDS) / 1e9;
+                    System.out.printf("%.2f seconds%n", seconds + fractionalSeconds);
+                }
+                else
+                {
+                    System.out.println(seconds + " seconds");
+                }
             }
         }
     }
