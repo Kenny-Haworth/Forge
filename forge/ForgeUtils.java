@@ -106,7 +106,7 @@ public final class ForgeUtils
      * @return A list of all subdirectories in the given directory
      * @throws IOException If getting the subdirectories fails
      */
-    public static List<File> getSubdirectories(String directory) throws IOException
+    public static List<Path> getSubdirectories(String directory) throws IOException
     {
         return getSubdirectories(Paths.get(directory));
     }
@@ -120,7 +120,7 @@ public final class ForgeUtils
      * @return A list of all subdirectories in the given directory
      * @throws IOException If getting the subdirectories fails
      */
-    public static List<File> getSubdirectories(File directory) throws IOException
+    public static List<Path> getSubdirectories(File directory) throws IOException
     {
         return getSubdirectories(directory.toPath());
     }
@@ -134,13 +134,12 @@ public final class ForgeUtils
      * @return A list of all subdirectories in the given directory
      * @throws IOException If getting the subdirectories fails
      */
-    public static List<File> getSubdirectories(Path directory) throws IOException
+    public static List<Path> getSubdirectories(Path directory) throws IOException
     {
         try (Stream<Path> stream = Files.walk(directory))
         {
             return stream.sorted(Comparator.reverseOrder())
-                         .map(Path::toFile)
-                         .filter(File::isDirectory)
+                         .filter(Files::isDirectory)
                          .collect(Collectors.toList());
         }
     }
@@ -154,7 +153,7 @@ public final class ForgeUtils
      * @return A list of all files in the given directory
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getFiles(String directory) throws IOException
+    public static List<Path> getFiles(String directory) throws IOException
     {
         return getFiles(Paths.get(directory));
     }
@@ -168,7 +167,7 @@ public final class ForgeUtils
      * @return A list of all files in the given directory
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getFiles(File directory) throws IOException
+    public static List<Path> getFiles(File directory) throws IOException
     {
         return getFiles(directory.toPath());
     }
@@ -182,13 +181,12 @@ public final class ForgeUtils
      * @return A list of all files in the given directory
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getFiles(Path directory) throws IOException
+    public static List<Path> getFiles(Path directory) throws IOException
     {
         try (Stream<Path> stream = Files.walk(directory))
         {
             return stream.sorted(Comparator.reverseOrder())
-                         .map(Path::toFile)
-                         .filter(Predicate.not(File::isDirectory))
+                         .filter(Predicate.not(Files::isDirectory))
                          .collect(Collectors.toList());
         }
     }
@@ -201,7 +199,7 @@ public final class ForgeUtils
      * @param directory The directory to search for files in
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getAllFiles(String directory) throws IOException
+    public static List<Path> getAllFiles(String directory) throws IOException
     {
         return getAllFiles(Paths.get(directory));
     }
@@ -214,7 +212,7 @@ public final class ForgeUtils
      * @param directory The directory to search for files in
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getAllFiles(File directory) throws IOException
+    public static List<Path> getAllFiles(File directory) throws IOException
     {
         return getAllFiles(directory.toPath());
     }
@@ -227,12 +225,11 @@ public final class ForgeUtils
      * @param directory The directory to search for files in
      * @throws IOException If an error occurs searching the given directory
      */
-    public static List<File> getAllFiles(Path directory) throws IOException
+    public static List<Path> getAllFiles(Path directory) throws IOException
     {
         try (Stream<Path> stream = Files.walk(directory))
         {
             return stream.sorted(Comparator.reverseOrder())
-                         .map(Path::toFile)
                          .collect(Collectors.toList());
         }
     }
@@ -297,8 +294,6 @@ public final class ForgeUtils
     {
         deleteDir(directory.toPath());
     }
-
-
 
     /**
      * Deletes the given directory.
