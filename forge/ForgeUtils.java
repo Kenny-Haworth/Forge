@@ -37,31 +37,31 @@ public final class ForgeUtils
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
-    public static String md5Sum(File file) throws Exception
-    {
-        return md5Sum(file.getAbsolutePath());
-    }
-
-    /**
-     * Returns the MD5 checksum of the given file.
-     *
-     * @param file The file to get the checksum of
-     * @return An MD5 checksum String
-     * @throws Exception If an error occurs getting the checksum
-     */
-    public static String md5Sum(Path file) throws Exception
-    {
-        return md5Sum(file.toString());
-    }
-
-    /**
-     * Returns the MD5 checksum of the given file.
-     *
-     * @param file The file to get the checksum of
-     * @return An MD5 checksum String
-     * @throws Exception If an error occurs getting the checksum
-     */
     public static String md5Sum(String file) throws Exception
+    {
+        return md5Sum(new File(file));
+    }
+
+    /**
+     * Returns the MD5 checksum of the given file.
+     *
+     * @param path The file to get the checksum of
+     * @return An MD5 checksum String
+     * @throws Exception If an error occurs getting the checksum
+     */
+    public static String md5Sum(Path path) throws Exception
+    {
+        return md5Sum(path.toFile());
+    }
+
+    /**
+     * Returns the MD5 checksum of the given file.
+     *
+     * @param file The file to get the checksum of
+     * @return An MD5 checksum String
+     * @throws Exception If an error occurs getting the checksum
+     */
+    public static String md5Sum(File file) throws Exception
     {
         try (FileInputStream in = new FileInputStream(file))
         {
