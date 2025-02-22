@@ -3,11 +3,16 @@ package forge;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TimerTask;
@@ -183,12 +188,9 @@ public final class ForgeUtils
      */
     public static List<Path> getFiles(Path directory) throws IOException
     {
-        try (Stream<Path> stream = Files.walk(directory))
-        {
-            return stream.sorted(Comparator.reverseOrder())
-                         .filter(Predicate.not(Files::isDirectory))
-                         .collect(Collectors.toList());
-        }
+        List<Path> files = new ArrayList<>();
+        Files.walkFileTree(directory, new FilteringFileVisitor(files, Predicate.not(Files::isDirectory)));
+        return files;
     }
 
     /**
@@ -227,11 +229,10 @@ public final class ForgeUtils
      */
     public static List<Path> getAllFiles(Path directory) throws IOException
     {
-        try (Stream<Path> stream = Files.walk(directory))
-        {
-            return stream.sorted(Comparator.reverseOrder())
-                         .collect(Collectors.toList());
-        }
+        List<Path> files = new ArrayList<>();
+        Files.walkFileTree(directory, new FilteringFileVisitor(files));
+        files.sort(Comparator.reverseOrder());
+        return files;
     }
 
     /**
@@ -308,6 +309,54 @@ public final class ForgeUtils
             stream.sorted(Comparator.reverseOrder())
                   .map(Path::toFile)
                   .forEach(File::delete);
+        }
+    }
+
+    /**
+     * A FileVisitor that filters files based on the given predicates.
+     *
+     * This class additionally handles AccessDeniedExceptions by printing an error message
+     * and skipping the subtree instead of throwing an exception, as Files.walk() does.
+     */
+    private static final class FilteringFileVisitor extends SimpleFileVisitor<Path>
+    {
+        private final List<Path> files; //a list of the files visited
+        private final List<Predicate<Path>> filters; //a list of filters to test
+
+        /**
+         * Creates a new FilteringFileVisitor.
+         *
+         * @param files To fill with the files visited
+         * @param filters To filter the files visited - Paths that do not pass all filters will be excluded
+         */
+        @SafeVarargs
+        public FilteringFileVisitor(List<Path> files, Predicate<Path>... filters)
+        {
+            this.files = files;
+            this.filters = List.of(filters);
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
+        {
+            //only add files that pass all filters
+            if (this.filters.stream().allMatch(filter -> filter.test(file)))
+            {
+                this.files.add(file);
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException e) throws IOException
+        {
+            //handle AccessDeniedExceptions by printing an error message and skipping the subtree
+            if (e instanceof AccessDeniedException)
+            {
+                System.err.println("Access denied to file: " + file.toString());
+                return FileVisitResult.SKIP_SUBTREE;
+            }
+            throw e;
         }
     }
 }
