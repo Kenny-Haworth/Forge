@@ -22,7 +22,7 @@ public final class StopWatch
     /**
      * Restarts the timer.
      */
-    private void restart()
+    public void restart()
     {
         this.time = System.nanoTime();
     }
@@ -38,20 +38,15 @@ public final class StopWatch
         System.out.print("Time elapsed: ");
 
         //determine a suitable TimeUnit to use
-        TimeUnit timeUnit;
-        if (timeElapsed < 1e8) //less than 100 milliseconds
+        TimeUnit timeUnit = switch(timeElapsed)
         {
-            timeUnit = TimeUnit.NANOSECONDS;
-        }
-        else if (timeElapsed < 1e9) //less than 1 second
-        {
-            timeUnit = TimeUnit.MILLISECONDS;
-        }
-        else
-        {
-            timeUnit = TimeUnit.SECONDS;
-        }
+            case long n when n < 1_000 -> TimeUnit.NANOSECONDS; //less than 1 microsecond
+            case long n when n < 1_000_000 -> TimeUnit.MICROSECONDS; //less than 1 millisecond
+            case long n when n < 1_000_000_000 -> TimeUnit.MILLISECONDS; //less than 1 second
+            default -> TimeUnit.SECONDS; //1 second or more
+        };
 
+        //print the time elapsed
         switch (timeUnit)
         {
             case NANOSECONDS, MICROSECONDS, MILLISECONDS ->
