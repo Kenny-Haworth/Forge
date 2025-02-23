@@ -94,6 +94,30 @@ public final class ForgeUtils
     }
 
     /**
+     * Converts the given number of bytes to a human-readable format.
+     *
+     * @param bytes The number of bytes to convert
+     * @param binary True to use binary format (2^10), false to use decimal format (10^3)
+     * @return A human-readable String representation of the given number of bytes
+     */
+    public static String convertBytes(double bytes, boolean binary)
+    {
+        int base = binary ? 1024 : 1000;
+        String[] units = binary ? new String[]{"Bytes", "KiB", "MiB", "GiB", "TiB", "PiB"} :
+                                  new String[]{"Bytes", "KB", "MB", "GB", "TB", "PB"};
+        int unitIndex = 0;
+        double size = bytes;
+
+        while (size >= base && unitIndex < units.length - 1)
+        {
+            size /= base;
+            unitIndex++;
+        }
+
+        return String.format("%.2f %s", size, units[unitIndex]);
+    }
+
+    /**
      * Allows the user of lambda expressions when constructing TimerTasks.
      *
      * @param runnable The runnable to use within the TimerTask.
