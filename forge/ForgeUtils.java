@@ -123,7 +123,7 @@ public final class ForgeUtils
      * @param runnable The runnable to use within the TimerTask.
      * @return A TimerTask
      */
-    public static TimerTask timerTaskLambda(Runnable runnable)
+    public static TimerTask timerTask(Runnable runnable)
     {
         return new TimerTask()
         {
