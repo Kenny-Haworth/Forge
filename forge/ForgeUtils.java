@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -115,6 +116,65 @@ public final class ForgeUtils
         }
 
         return String.format("%.2f %s", size, units[unitIndex]);
+    }
+
+
+    /**
+     * Converts a time in nanoseconds to a human-readable format.
+     *
+     * If the time given is less than or equal to 0, an empty String is returned.
+     *
+     * @param nanoTime A time in nanoseconds
+     * @return A human-readable String representation of the time
+     */
+    public static String timeToStr(long nanoTime)
+    {
+        if (nanoTime <= 0) return "";
+
+        //determine a suitable TimeUnit to use
+        TimeUnit timeUnit = switch(nanoTime)
+        {
+            case long n when n < 1_000 -> TimeUnit.NANOSECONDS; //less than 1 microsecond
+            case long n when n < 1_000_000 -> TimeUnit.MICROSECONDS; //less than 1 millisecond
+            case long n when n < 1_000_000_000 -> TimeUnit.MILLISECONDS; //less than 1 second
+            default -> TimeUnit.SECONDS; //1 second or more
+        };
+
+        String result = "";
+
+        //calculate the time elapsed
+        switch (timeUnit)
+        {
+            case NANOSECONDS, MICROSECONDS, MILLISECONDS ->
+            {
+                result += timeUnit.convert(nanoTime, TimeUnit.NANOSECONDS) + " " + timeUnit.toString().toLowerCase();
+            }
+            case SECONDS, MINUTES, HOURS, DAYS ->
+            {
+                long days = TimeUnit.DAYS.convert(nanoTime, TimeUnit.NANOSECONDS);
+                long hours = TimeUnit.HOURS.convert(nanoTime % TimeUnit.NANOSECONDS.convert(1, TimeUnit.DAYS), TimeUnit.NANOSECONDS);
+                long minutes = TimeUnit.MINUTES.convert(nanoTime % TimeUnit.NANOSECONDS.convert(1, TimeUnit.HOURS), TimeUnit.NANOSECONDS);
+                long seconds = TimeUnit.SECONDS.convert(nanoTime % TimeUnit.NANOSECONDS.convert(1, TimeUnit.MINUTES), TimeUnit.NANOSECONDS);
+
+                if (days > 0) result += days + " days ";
+                if (days > 0 || hours > 0) result += hours + " hours ";
+                if (days > 0 || hours > 0 || minutes > 0) result += minutes + " minutes ";
+
+                //use fractional seconds for closer comparisons
+                long totalSeconds = TimeUnit.SECONDS.convert(nanoTime, TimeUnit.NANOSECONDS);
+                if (totalSeconds < 50)
+                {
+                    double fractionalSeconds = nanoTime % TimeUnit.NANOSECONDS.convert(1, TimeUnit.SECONDS) / 1e9;
+                    result += String.format("%.2f seconds", seconds + fractionalSeconds);
+                }
+                else
+                {
+                    result += seconds + " seconds";
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
