@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,34 +35,37 @@ public final class ForgeUtils
      * Returns the MD5 checksum of the given file.
      *
      * @param file The file to get the checksum of
+     * @param counter An optional counter to update with the number of bytes read - pass null to not use
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
-    public static String md5Sum(String file) throws Exception
+    public static String md5Sum(String file, AtomicLong counter) throws Exception
     {
-        return md5Sum(new File(file));
+        return md5Sum(new File(file), counter);
     }
 
     /**
      * Returns the MD5 checksum of the given file.
      *
      * @param path The file to get the checksum of
+     * @param counter An optional counter to update with the number of bytes read - pass null to not use
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
-    public static String md5Sum(Path path) throws Exception
+    public static String md5Sum(Path path, AtomicLong counter) throws Exception
     {
-        return md5Sum(path.toFile());
+        return md5Sum(path.toFile(), counter);
     }
 
     /**
      * Returns the MD5 checksum of the given file.
      *
      * @param file The file to get the checksum of
+     * @param counter An optional counter to update with the number of bytes read - pass null to not use
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
-    public static String md5Sum(File file) throws Exception
+    public static String md5Sum(File file, AtomicLong counter) throws Exception
     {
         try (FileInputStream in = new FileInputStream(file))
         {
@@ -71,6 +75,11 @@ public final class ForgeUtils
             int bytesCount;
             while ((bytesCount = in.read(byteArray)) != -1)
             {
+                if (counter != null)
+                {
+                    counter.addAndGet(bytesCount);
+                }
+
                 md.update(byteArray, 0, bytesCount);
             }
 
