@@ -13,6 +13,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TimerTask;
@@ -243,6 +244,45 @@ public final class ForgeUtils
     }
 
     /**
+     * Returns a list of all directories in the root of the given directory.
+     * The search is not recursive and files are excluded.
+     *
+     * @param directory The directory to search for immediate subdirectories
+     * @return A list of all subdirectories in the root of the given directory
+     */
+    public static List<Path> getRootSubdirectories(String directory)
+    {
+        return getRootSubdirectories(new File(directory));
+    }
+
+    /**
+     * Returns a list of all directories in the root of the given directory.
+     * The search is not recursive and files are excluded.
+     *
+     * @param directory The directory to search for immediate subdirectories
+     * @return A list of all subdirectories in the root of the given directory
+     */
+    public static List<Path> getRootSubdirectories(Path directory)
+    {
+        return getRootSubdirectories(directory.toFile());
+    }
+
+    /**
+     * Returns a list of all directories in the root of the given directory.
+     * The search is not recursive and files are excluded.
+     *
+     * @param directory The directory to search for immediate subdirectories
+     * @return A list of all subdirectories in the root of the given directory
+     */
+    public static List<Path> getRootSubdirectories(File directory)
+    {
+        return Arrays.stream(directory.listFiles())
+                     .filter(File::isDirectory)
+                     .map(File::toPath)
+                     .collect(Collectors.toList());
+    }
+
+    /**
      * Returns a list of all files in the given directory.
      *
      * The search is recursive and directories are excluded.
@@ -287,6 +327,45 @@ public final class ForgeUtils
     }
 
     /**
+     * Returns a list of all files in the root of the given directory.
+     * The search is not recursive and directories are excluded.
+     *
+     * @param directory The directory to search for immediate files in
+     * @return A list of all files in the root of the given directory
+     */
+    public static List<Path> getRootFiles(String directory)
+    {
+        return getRootFiles(new File(directory));
+    }
+
+    /**
+     * Returns a list of all files in the root of the given directory.
+     * The search is not recursive and directories are excluded.
+     *
+     * @param directory The directory to search for immediate files in
+     * @return A list of all files in the root of the given directory
+     */
+    public static List<Path> getRootFiles(Path directory)
+    {
+        return getRootFiles(directory.toFile());
+    }
+
+    /**
+     * Returns a list of all files in the root of the given directory.
+     * The search is not recursive and directories are excluded.
+     *
+     * @param directory The directory to search for immediate files in
+     * @return A list of all files in the root of the given directory
+     */
+    public static List<Path> getRootFiles(File directory)
+    {
+        return Arrays.stream(directory.listFiles())
+                     .filter(File::isFile)
+                     .map(File::toPath)
+                     .collect(Collectors.toList());
+    }
+
+    /**
      * Returns a list of all files and directories in the given directory.
      *
      * The search is recursive.
@@ -326,6 +405,41 @@ public final class ForgeUtils
         Files.walkFileTree(directory, new FilteringFileVisitor(files));
         files.sort(Comparator.reverseOrder());
         return files;
+    }
+
+    /**
+     * Returns a list of all files and directories in the root of the given directory.
+     * The search is not recursive.
+     *
+     * @param directory The directory to search for files in
+     */
+    public static List<Path> getAllRootFiles(String directory)
+    {
+        return getAllRootFiles(new File(directory));
+    }
+
+    /**
+     * Returns a list of all files and directories in the root of the given directory.
+     * The search is not recursive.
+     *
+     * @param directory The directory to search for files in
+     */
+    public static List<Path> getAllRootFiles(Path directory)
+    {
+        return getAllRootFiles(directory.toFile());
+    }
+
+    /**
+     * Returns a list of all files and directories in the root of the given directory.
+     * The search is not recursive.
+     *
+     * @param directory The directory to search for files in
+     */
+    public static List<Path> getAllRootFiles(File directory)
+    {
+        return Arrays.stream(directory.listFiles())
+                     .map(File::toPath)
+                     .collect(Collectors.toList());
     }
 
     /**
