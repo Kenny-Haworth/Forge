@@ -1,5 +1,7 @@
 package forge;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,6 +34,17 @@ public final class ForgeUtils
      * A private constructor to prevent instantiation of this class.
      */
     private ForgeUtils() {}
+
+    /**
+     * Sets the system clipboard to the given text.
+     *
+     * @param text The text to set the clipboard to
+     */
+    public static void setClipboard(String text)
+    {
+        StringSelection selection = new StringSelection(text);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+    }
 
     /**
      * Returns the MD5 checksum of the given file.
