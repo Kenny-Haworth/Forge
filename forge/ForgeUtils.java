@@ -133,13 +133,23 @@ public final class ForgeUtils
         if (nanoTime <= 0) return "";
 
         //determine a suitable TimeUnit to use
-        TimeUnit timeUnit = switch(nanoTime)
+        TimeUnit timeUnit;
+        if (nanoTime < 1_000) //less than 1 microsecond
         {
-            case long n when n < 1_000 -> TimeUnit.NANOSECONDS; //less than 1 microsecond
-            case long n when n < 1_000_000 -> TimeUnit.MICROSECONDS; //less than 1 millisecond
-            case long n when n < 1_000_000_000 -> TimeUnit.MILLISECONDS; //less than 1 second
-            default -> TimeUnit.SECONDS; //1 second or more
-        };
+            timeUnit = TimeUnit.NANOSECONDS;
+        }
+        else if (nanoTime < 1_000_000) //less than 1 millisecond
+        {
+            timeUnit = TimeUnit.MICROSECONDS;
+        }
+        else if (nanoTime < 1_000_000_000) //less than 1 second
+        {
+            timeUnit = TimeUnit.MILLISECONDS;
+        }
+        else //1 second or more
+        {
+            timeUnit = TimeUnit.SECONDS;
+        }
 
         String result = "";
 
