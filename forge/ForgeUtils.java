@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -34,6 +35,25 @@ public final class ForgeUtils
      * A private constructor to prevent instantiation of this class.
      */
     private ForgeUtils() {}
+
+    /**
+     * Safely casts the given Object to a Map.
+     *
+     * @param <S> The key type
+     * @param <T> The value type
+     * @param object The object to cast to a Map
+     * @param keyType A class instance of the key type
+     * @param valueType A class instance of the value type
+     * @return A Map of the types specified
+     */
+    public static <S, T> Map<S, T> objToMap(Object object, Class<S> keyType, Class<T> valueType)
+    {
+        return ((Map<?, ?>)object).entrySet()
+                                  .stream()
+                                  .collect(Collectors.toMap(
+                                                e -> keyType.cast(e.getKey()),
+                                                e -> valueType.cast(e.getValue())));
+    }
 
     /**
      * Sets the system clipboard to the given text.
