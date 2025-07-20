@@ -47,6 +47,9 @@ import javax.imageio.ImageIO;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinUser;
+
 /**
  * A collection of commonly used utility methods.
  */
@@ -301,6 +304,30 @@ public final class ForgeUtils
         }
 
         return programRunning;
+    }
+
+    /**
+     * Registers a kill switch that will exit the application when the escape key is pressed.
+     *
+     * The program will exit regardless of what application is currently focused.
+     * This method only works on Windows.
+     */
+    public static void registerEscapeKillSwitch()
+    {
+        new Thread(() ->
+        {
+            WinUser.MSG msg = new WinUser.MSG();
+            User32.INSTANCE.RegisterHotKey(null, 1, 0, 0x1B); //escape key
+            while (User32.INSTANCE.GetMessage(msg, null, 0, 0) != 0)
+            {
+                if (msg.message == WinUser.WM_HOTKEY)
+                {
+                    System.out.println("Escape key pressed, exiting!");
+                    System.exit(0);
+                }
+            }
+        }, "Escape Kill Switch")
+        .start();
     }
 
     /**
