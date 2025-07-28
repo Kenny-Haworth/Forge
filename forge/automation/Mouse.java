@@ -1,12 +1,11 @@
 package forge.automation;
 
-import java.awt.AWTException;
+import static forge.automation.AutomationConstants.ROBOT;
+
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.geom.Point2D;
@@ -19,30 +18,8 @@ import javax.swing.Timer;
  */
 public final class Mouse
 {
-    private static final int WIDTH;
-    private static final int HEIGHT;
-    private static final Robot ROBOT;
-
-    //initializes all static variables
-    static
-    {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        WIDTH = screenSize.width;
-        HEIGHT = screenSize.height;
-
-        Robot robot = null;
-        try
-        {
-            robot = new Robot();
-        }
-        catch (AWTException e)
-        {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        ROBOT = robot;
-    }
+    private static final int WIDTH =  Toolkit.getDefaultToolkit().getScreenSize().width;
+    private static final int HEIGHT =  Toolkit.getDefaultToolkit().getScreenSize().height;
 
     /**
      * A private constructor to prevent non-static use of this class.
@@ -141,7 +118,7 @@ public final class Mouse
         for (int i = 0; i < numTicks; i++)
         {
             ROBOT.mouseWheel(-1);
-            ROBOT.delay(10);
+            ROBOT.delay(50);
         }
     }
 
@@ -155,7 +132,7 @@ public final class Mouse
         for (int i = 0; i < numTicks; i++)
         {
             ROBOT.mouseWheel(1);
-            ROBOT.delay(10);
+            ROBOT.delay(50);
         }
     }
 
@@ -227,22 +204,14 @@ public final class Mouse
      *
      * @param percentageX The percentage X location to get the Color from
      * @param percentageY The percentage Y location to get the Color from
-     * @return
+     * @return The Color of the pixel at the specified location
      */
     public static Color getColorAtLocation(double percentageX, double percentageY)
     {
-        BufferedImage image = ROBOT.createScreenCapture(new Rectangle((int)(percentageX * WIDTH), (int)(percentageY * HEIGHT), 1, 1));
+        BufferedImage image = ROBOT.createScreenCapture(new Rectangle((int)(percentageX * WIDTH),
+                                                                      (int)(percentageY * HEIGHT),
+                                                                      1, 1));
         return new Color(image.getRGB(0, 0));
-    }
-
-    /**
-     * Sleeps for the specified number of milliseconds.
-     *
-     * @param milliseconds The number of milliseconds to sleep
-     */
-    public static void delay(int milliseconds)
-    {
-        ROBOT.delay(milliseconds);
     }
 
     /**

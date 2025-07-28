@@ -1,31 +1,14 @@
 package forge.automation;
 
-import java.awt.AWTException;
-import java.awt.Robot;
 import java.awt.event.KeyEvent;
+
+import static forge.automation.AutomationConstants.ROBOT;
 
 /**
  * Common methods for automating keyboard events.
  */
 public final class Keyboard
 {
-    //initializes ROBOT
-    private static final Robot ROBOT; static
-    {
-        Robot robot = null;
-        try
-        {
-            robot = new Robot();
-        }
-        catch (AWTException e)
-        {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        ROBOT = robot;
-    }
-
     /**
      * A private constructor to prevent non-static use of this class.
      */
