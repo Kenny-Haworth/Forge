@@ -35,9 +35,9 @@ public final class AndroidTasks
     public static void copyToClipboard(String text)
     {
         Mouse.leftClick(2.020, 0.465);
-        ROBOT.delay(500);
+        ROBOT.delay(2000);
         ForgeUtils.setClipboard(text);
-        ROBOT.delay(500);
+        ROBOT.delay(2000);
     }
 
     /**
