@@ -314,7 +314,7 @@ public final class ForgeUtils
      */
     public static void registerEscapeKillSwitch()
     {
-        new Thread(() ->
+        Thread thread = new Thread(() ->
         {
             WinUser.MSG msg = new WinUser.MSG();
             User32.INSTANCE.RegisterHotKey(null, 1, 0, 0x1B); //escape key
@@ -326,8 +326,9 @@ public final class ForgeUtils
                     System.exit(0);
                 }
             }
-        }, "Escape Kill Switch")
-        .start();
+        }, "Escape Kill Switch");
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
