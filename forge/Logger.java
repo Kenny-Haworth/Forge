@@ -2,10 +2,8 @@ package forge;
 
 import java.io.FileWriter;
 import java.io.IOException;
-
-import java.text.SimpleDateFormat;
-
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * A class to log all info, warnings, and errors to file.
@@ -70,11 +68,11 @@ public final class Logger
      */
     private static synchronized void write(String text)
     {
-        String formattedDateTime = new SimpleDateFormat("dd/MM/yyyy HH:mm: ").format(new Date());
+        String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm: "));
 
         try (FileWriter writer = new FileWriter("logs/log.log", true))
         {
-            writer.write(formattedDateTime);
+            writer.write(timeStamp);
             writer.write(text + "\n");
         }
         catch (IOException e)

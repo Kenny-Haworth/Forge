@@ -58,7 +58,7 @@ import com.sun.jna.platform.win32.WinUser;
 public final class ForgeUtils
 {
     /**
-     * Prevents instantiation of this class.
+     * A private constructor to prevent non-static use of this class.
      */
     private ForgeUtils() {}
 
@@ -545,7 +545,7 @@ public final class ForgeUtils
         switch (timeUnit)
         {
             case NANOSECONDS, MICROSECONDS, MILLISECONDS ->
-            {
+            { //NOSONAR
                 result += timeUnit.convert(nanoTime, TimeUnit.NANOSECONDS) + " " + timeUnit.toString().toLowerCase();
             }
             case SECONDS, MINUTES, HOURS, DAYS ->
