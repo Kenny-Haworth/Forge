@@ -28,6 +28,8 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -406,6 +408,17 @@ public final class ForgeUtils
     {
         StringSelection selection = new StringSelection(text);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+    }
+
+    /**
+     * Returns a timestamp for the current time.
+     * The formatting is yyyyMMdd_HHmmss (e.g. 20250801_205232).
+     *
+     * @return A timestamp for the current time
+     */
+    public static String getTimeStamp()
+    {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
     }
 
     /**
