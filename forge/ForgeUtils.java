@@ -23,6 +23,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -633,12 +634,9 @@ public final class ForgeUtils
      */
     public static List<Path> getSubdirectories(Path directory) throws IOException
     {
-        try (Stream<Path> stream = Files.walk(directory))
-        {
-            return stream.sorted(Comparator.reverseOrder())
-                         .filter(Files::isDirectory)
-                         .collect(Collectors.toList());
-        }
+        List<Path> files = new ArrayList<>();
+        Files.walkFileTree(directory, new FilteringFileVisitor(files, Files::isDirectory));
+        return files;
     }
 
     /**
@@ -918,7 +916,7 @@ public final class ForgeUtils
     }
 
     /**
-     * A FileVisitor that filters files based on the given predicates.
+     * A FileVisitor that filters directories and files based on the given predicates.
      *
      * This class additionally handles AccessDeniedExceptions by printing an error message
      * and skipping the subtree instead of throwing an exception, as Files.walk() does.
@@ -942,10 +940,30 @@ public final class ForgeUtils
         }
 
         @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException
+        {
+            //skip special Windows paths and symbolic links
+            if (dir.toString().contains("$Recycle.Bin") ||
+                dir.toString().contains("System Volume Information") ||
+                Files.isSymbolicLink(dir))
+            {
+                return FileVisitResult.SKIP_SUBTREE;
+            }
+            //add this directory if it passes all filters
+            else if (this.filters.stream().allMatch(filter -> filter.test(dir)))
+            {
+                this.files.add(dir);
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
         {
-            //only add files that pass all filters
-            if (this.filters.stream().allMatch(filter -> filter.test(file)))
+            //only add files that are readable, pass all filters, and are not symbolic links
+            if (Files.isReadable(file) &&
+                this.filters.stream().allMatch(filter -> filter.test(file)) &&
+                !Files.isSymbolicLink(file))
             {
                 this.files.add(file);
             }
@@ -958,8 +976,15 @@ public final class ForgeUtils
             //handle AccessDeniedExceptions by printing an error message and skipping the subtree
             if (e instanceof AccessDeniedException)
             {
-                System.err.println("Access denied to file: " + file.toString());
+                System.err.println("Access denied to file: " + file);
                 return FileVisitResult.SKIP_SUBTREE;
+            }
+
+            //handle non-existent files by printing an error message
+            if (e instanceof NoSuchFileException)
+            {
+                System.err.println("File not found: " + file);
+                return FileVisitResult.CONTINUE;
             }
             throw e;
         }
