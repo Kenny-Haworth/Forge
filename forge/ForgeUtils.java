@@ -4,6 +4,7 @@ import static forge.Logger.log;
 import static forge.Logger.logError;
 import static forge.Logger.logWarning;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -592,6 +593,21 @@ public final class ForgeUtils
                 runnable.run();
             }
         };
+    }
+
+    /**
+     * Compares the two given colors and returns true if they are similar.
+     *
+     * @param color1 The first color to compare
+     * @param color2 The second color to compare
+     * @param maxAllowedDifference The max allowed value difference between red, green, and blue channels
+     * @return True if the given colors are similar
+     */
+    public static boolean colorIsSimilar(Color color1, Color color2, int maxAllowedDifference)
+    {
+        return Math.abs(color1.getRed() - color2.getRed()) <= maxAllowedDifference &&
+               Math.abs(color1.getGreen() - color2.getGreen()) <= maxAllowedDifference &&
+               Math.abs(color1.getBlue() - color2.getBlue()) <= maxAllowedDifference;
     }
 
     /**
