@@ -34,6 +34,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -820,6 +821,53 @@ public final class ForgeUtils
     }
 
     /**
+     * Fills lists of all files and directories in the given directory.
+     *
+     * The search is recursive.
+     *
+     * @param directory The directory to search within
+     * @param files A list of all files in the given directories
+     * @param directories A list of all subdirectories in the given directory
+     * @throws IOException If an error occurs searching the given directory
+     */
+    public static void getAllFiles(String directory, List<Path> files, List<Path> directories) throws IOException
+    {
+        getAllFiles(Paths.get(directory), files, directories);
+    }
+
+    /**
+     * Fills lists of all files and directories in the given directory.
+     *
+     * The search is recursive.
+     *
+     * @param directory The directory to search within
+     * @param files A list of all files in the given directories
+     * @param directories A list of all subdirectories in the given directory
+     * @throws IOException If an error occurs searching the given directory
+     */
+    public static void getAllFiles(File directory, List<Path> files, List<Path> directories) throws IOException
+    {
+        getAllFiles(directory.toPath(), files, directories);
+    }
+
+    /**
+     * Fills lists of all files and directories in the given directory.
+     *
+     * The search is recursive.
+     *
+     * @param directory The directory to search within
+     * @param files A list of all files in the given directories
+     * @param directories A list of all subdirectories in the given directory
+     * @throws IOException If an error occurs searching the given directory
+     */
+    public static void getAllFiles(Path directory, List<Path> files, List<Path> directories) throws IOException
+    {
+        Files.walkFileTree(directory, new FilteringFileVisitor(files, directories));
+        directories.sort(Comparator.reverseOrder());
+        files.sort(Comparator.reverseOrder());
+    }
+
+    /**
      * Returns a list of all files and directories in the root of the given directory.
      * The search is not recursive.
      *
@@ -939,13 +987,14 @@ public final class ForgeUtils
      */
     private static final class FilteringFileVisitor extends SimpleFileVisitor<Path>
     {
-        private final List<Path> files; //a list of the files visited
+        private final List<Path> directories; //a list of the directories visited
+        private final List<Path> files; //a list of the files (and potentially directories) visited
         private final List<Predicate<Path>> filters; //a list of filters to test
 
         /**
          * Creates a new FilteringFileVisitor.
          *
-         * @param files To fill with the files visited
+         * @param files To fill with the files and directories visited
          * @param filters To filter the files visited - Paths that do not pass all filters will be excluded
          */
         @SafeVarargs
@@ -953,6 +1002,20 @@ public final class ForgeUtils
         {
             this.files = files;
             this.filters = List.of(filters);
+            this.directories = null;
+        }
+
+        /**
+         * Creates a new FilteringFileVisitor.
+         *
+         * @param files To fill with the files visited
+         * @param directories To fill with the directories visited
+         */
+        public FilteringFileVisitor(List<Path> files, List<Path> directories)
+        {
+            this.files = files;
+            this.directories = directories;
+            this.filters = Collections.emptyList();
         }
 
         @Override
@@ -968,7 +1031,16 @@ public final class ForgeUtils
             //add this directory if it passes all filters
             else if (this.filters.stream().allMatch(filter -> filter.test(dir)))
             {
-                this.files.add(dir);
+                //place directories in "files"
+                if (this.directories == null)
+                {
+                    this.files.add(dir);
+                }
+                //place directories in the dedicated directories list
+                else
+                {
+                    this.directories.add(dir);
+                }
             }
             return FileVisitResult.CONTINUE;
         }
