@@ -427,7 +427,7 @@ public final class ForgeUtils
      * Returns the MD5 checksum of the given file.
      *
      * @param file The file to get the checksum of
-     * @param counter An optional counter to update with the number of bytes read - pass null to not use
+     * @param counter An optional counter to update with the number of bytes checksummed. Pass null to not use.
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
@@ -440,7 +440,7 @@ public final class ForgeUtils
      * Returns the MD5 checksum of the given file.
      *
      * @param path The file to get the checksum of
-     * @param counter An optional counter to update with the number of bytes read - pass null to not use
+     * @param counter An optional counter to update with the number of bytes checksummed. Pass null to not use.
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
@@ -453,7 +453,7 @@ public final class ForgeUtils
      * Returns the MD5 checksum of the given file.
      *
      * @param file The file to get the checksum of
-     * @param counter An optional counter to update with the number of bytes read - pass null to not use
+     * @param counter An optional counter to update with the number of bytes checksummed. Pass null to not use.
      * @return An MD5 checksum String
      * @throws Exception If an error occurs getting the checksum
      */
