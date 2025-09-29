@@ -65,6 +65,20 @@ public final class ForgeUtils
      */
     private ForgeUtils() {}
 
+    //ensures deepest files and directories are first
+    public static final Comparator<Path> LONGEST_PATHS_FIRST = (item1, item2) ->
+    {
+        int length = item2.toString().length() - item1.toString().length();
+
+        //compare lexicographically if length is the same to ensure a stable sort
+        if (length == 0)
+        {
+            return item2.toString().compareTo(item1.toString());
+        }
+
+        return length;
+    };
+
     /**
      * Converts a temperature from celsius to fahrenheit.
      *
@@ -816,7 +830,7 @@ public final class ForgeUtils
     {
         List<Path> files = new ArrayList<>();
         Files.walkFileTree(directory, new FilteringFileVisitor(files));
-        files.sort(Comparator.reverseOrder());
+        files.sort(LONGEST_PATHS_FIRST);
         return files;
     }
 
@@ -863,8 +877,8 @@ public final class ForgeUtils
     public static void getAllFiles(Path directory, List<Path> files, List<Path> directories) throws IOException
     {
         Files.walkFileTree(directory, new FilteringFileVisitor(files, directories));
-        directories.sort(Comparator.reverseOrder());
-        files.sort(Comparator.reverseOrder());
+        directories.sort(LONGEST_PATHS_FIRST);
+        files.sort(LONGEST_PATHS_FIRST);
     }
 
     /**
