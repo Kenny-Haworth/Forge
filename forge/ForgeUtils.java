@@ -793,6 +793,22 @@ public final class ForgeUtils
     }
 
     /**
+     * Determines if the given file or directory lives at the root of the given directory.
+     *
+     * If the given file or directory is equal to the given directory, this method will return false.
+     *
+     * @param directory The directory to check the file/directory against
+     * @param file The file or directory to test if it lives at the root level of the given directory
+     * @return True if the file or directory lives at the root of the given directory, false otherwise
+     */
+    public static boolean isRootLevel(Path directory, Path file)
+    {
+        String pathStr = file.toString();
+        String rootPath = directory.toString() + File.separator;
+        return pathStr.startsWith(rootPath) && !pathStr.substring(rootPath.length()).contains(File.separator);
+    }
+
+    /**
      * Returns a list of all files and directories in the given directory.
      *
      * The search is recursive.
