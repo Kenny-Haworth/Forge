@@ -18,6 +18,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.AccessDeniedException;
@@ -113,6 +114,52 @@ public final class ForgeUtils
     public static Image loadImage(String iconPath, int width, int height) throws IOException
     {
         return ImageIO.read(new File(iconPath)).getScaledInstance(width, height, Image.SCALE_SMOOTH);
+    }
+
+    /**
+     * Given a CSV file, aligns each column by appending whitespace.
+     *
+     * The given file will be overwritten.
+     *
+     * @param csvPath The path to the CSV file
+     * @throws IOException If an error occurs reading from or writing to the CSV
+     */
+    public static void alignCsv(Path csvPath) throws IOException
+    {
+        //read the CSV into a 2D grid
+        List<String> csv = Files.readAllLines(csvPath);
+        String[][] cells = new String[csv.size()][];
+
+        for (int i = 0; i < csv.size(); i++)
+        {
+            cells[i] = csv.get(i).split(",");
+        }
+
+        //process columns sequentially
+        for (int col = 0 ; col < cells[0].length; col++)
+        {
+            //determine the longest line in each column
+            int longestLine = Integer.MIN_VALUE;
+            for (int row = 0; row < cells.length; row++)
+            {
+                longestLine = Math.max(longestLine, cells[row][col].length());
+            }
+
+            //pad spaces in each cell in this column to reach the longest line
+            for (int row = 0; row < cells.length; row++)
+            {
+                cells[row][col] += " ".repeat(longestLine - cells[row][col].length());
+            }
+        }
+
+        //overwrite the file
+        try (FileWriter writer = new FileWriter(csvPath.toFile()))
+        {
+            for (int row = 0; row < cells.length; row++)
+            {
+                writer.write(Arrays.stream(cells[row]).collect(Collectors.joining(", ")) + "\n");
+            }
+        }
     }
 
     /**
