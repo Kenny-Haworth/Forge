@@ -31,3 +31,17 @@ Some Forge functions are specific to Windows, but most will work on any OS.
 The Forge can be packaged into Forge.jar by running [build.sh](build.sh). This script has only been tested on Windows using Git bash, but it should work on Linux too.
 
 The jar can then be linked in to your own project.
+
+## Third Party Software
+
+This project includes jars within the lib directory from the following third-party software:
+
+- JNA
+  - https://github.com/java-native-access/jna
+  - License: Apache License 2.0
+
+- jsoup
+  - https://jsoup.org/
+  - License: MIT License
+
+Please see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for third-party licenses.
