@@ -1,17 +1,33 @@
 # Forge 🛠️
 
-The **Forge** is a lightweight collection of commonly-used Java utility methods, similar to Apache Commons.
+The **Forge** is a lightweight collection of reusable Java components and utility methods, similar in spirit to Apache Commons.
+The Forge is intended to serve as a customizable, minimal library for personal projects.
 
-This project is designed to be used as a Git submodule to other projects.
+Utilities include:
+ - File utilities
+ - Web utilities
+ - Enhanced Swing components
+ - Automation helpers
+ - A logger
 
 ## Why the Forge?
 
-I like to implement these methods from scratch for a few reasons:
- - To allow for better customization of these utility functions as projects require
- - To reduce dependence on external libraries
- - To improve my own understanding and experience with Java
+The Forge implements utilities from scratch to:
+ - Allow for greater customization of utility functions as projects require
+ - Reduce dependence on external libraries
+ - Improve my own understanding and experience with Java
 
-Many of my personal projects use the Forge as a submodule. Having a centralized placed for shared utilities helps:
+Many of my personal projects use the Forge as a submodule. Having a centralized place for shared utilities helps:
  - Reduce boilerplate code and code duplication
- - Encourage reuse and consistency
- - Speed up development on new ideas and experiments
+ - Encourage code reuse and consistency
+ - Speed up development on new projects and ideas
+
+Some Forge functions are specific to Windows, but most will work on any OS.
+
+## How to Use
+
+`git submodule add https://github.com/Kenny-Haworth/Forge.git lib/forge`
+
+The Forge can be packaged into Forge.jar by running [build.sh](build.sh). This script has only been tested on Windows using Git bash, but it should work on Linux too.
+
+The jar can then be linked in to your own project.

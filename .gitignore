@@ -1,2 +1,5 @@
 .vscode
 bin
+test
+logs
+*.log
