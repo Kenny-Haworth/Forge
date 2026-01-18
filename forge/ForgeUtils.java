@@ -103,17 +103,29 @@ public final class ForgeUtils
     }
 
     /**
+     * Loads the image at the given path.
+     *
+     * @param imagePath The path to load the image from
+     * @return An Image loaded from the given path
+     * @throws IOException If loading the image fails
+     */
+    public static Image loadImage(String imagePath) throws IOException
+    {
+        return ImageIO.read(ForgeUtils.class.getResource(imagePath));
+    }
+
+    /**
      * Loads image at the given path and scales it to the given size.
      *
-     * @param iconPath The path to load the icon from
+     * @param imagePath The path to load the image from
      * @param width The width to set the image
      * @param height The height to set the image
      * @return An Image set to the given size
      * @throws IOException If loading the image fails
      */
-    public static Image loadImage(String iconPath, int width, int height) throws IOException
+    public static Image loadImage(String imagePath, int width, int height) throws IOException
     {
-        return ImageIO.read(new File(iconPath)).getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return loadImage(imagePath).getScaledInstance(width, height, Image.SCALE_SMOOTH);
     }
 
     /**
