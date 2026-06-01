@@ -35,9 +35,9 @@ public final class AndroidTasks
     public static void copyToClipboard(String text)
     {
         Mouse.leftClick(2.020, 0.465);
-        ROBOT.delay(2000);
+        ROBOT.delay(250);
         ForgeUtils.setClipboard(text);
-        ROBOT.delay(2000);
+        ROBOT.delay(250);
     }
 
     /**
@@ -53,7 +53,7 @@ public final class AndroidTasks
         private Keyboard() {}
 
         /**
-         * Clicks the next button (only available when filling in forms or fields).
+         * Clicks the next/done button (only available when filling in forms or fields).
          */
         public static void next()
         {
