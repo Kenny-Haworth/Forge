@@ -10,8 +10,10 @@ import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.Timer;
 
-import javax.swing.Timer;
+import forge.ForgeUtils;
+
 
 /**
  * Common methods for automating mouse events.
@@ -161,25 +163,25 @@ public final class Mouse
     /**
      * Drags the mouse, while clicking, from one location to the next.
      *
-     * @param startPercentageX The percentage X location to start dragging from
-     * @param startPercentageY The percentage Y location to start dragging from
-     * @param endPercentageX The percentage X location to stop dragging on
-     * @param endPercentageY The percentage Y location to stop dragging on
+     * @param startPercentX The percentage X location to start dragging from
+     * @param startPercentY The percentage Y location to start dragging from
+     * @param endPercentX The percentage X location to stop dragging on
+     * @param endPercentY The percentage Y location to stop dragging on
      */
-    public static void drag(double startPercentageX,
-                            double startPercentageY,
-                            double endPercentageX,
-                            double endPercentageY)
+    public static void drag(double startPercentX,
+                            double startPercentY,
+                            double endPercentX,
+                            double endPercentY)
     {
         //move to the location and hold down left click
-        move(startPercentageX, startPercentageY);
+        move(startPercentX, startPercentY);
         ROBOT.mousePress(InputEvent.BUTTON1_DOWN_MASK);
 
         //calculate starting and ending positions
-        int startX = (int)(startPercentageX * WIDTH);
-        int endX = (int)(endPercentageX * WIDTH);
-        int startY = (int)(startPercentageY * HEIGHT);
-        int endY = (int)(endPercentageY * HEIGHT);
+        int startX = (int)(startPercentX * WIDTH);
+        int endX = (int)(endPercentX * WIDTH);
+        int startY = (int)(startPercentY * HEIGHT);
+        int endY = (int)(endPercentY * HEIGHT);
 
         //calculate increments
         int numSteps = Math.max(Math.abs(startX - endX), Math.abs(startY - endY));
@@ -219,16 +221,15 @@ public final class Mouse
      *
      * The thread started is a daemon thread and will not prevent the JVM from exiting.
      */
-    public static void enablePercentageDebug()
+    public static void enablePercentDebug()
     {
-        Timer timer = new Timer(50, _ ->
+        Timer timer = new Timer("Mouse Percentage Debug", true);
+        timer.scheduleAtFixedRate(ForgeUtils.timerTask(() ->
         {
             Point point = MouseInfo.getPointerInfo().getLocation();
             System.out.printf("X: %.3f, Y: %.3f%n", point.getX()/WIDTH, point.getY()/HEIGHT);
-
-        });
-        timer.setInitialDelay(0);
-        timer.start();
+        }),
+        0, 50);
     }
 
     /**
@@ -238,8 +239,9 @@ public final class Mouse
      */
     public static void enablePixelDebug()
     {
-        Timer timer = new Timer(50, _ -> System.out.println(MouseInfo.getPointerInfo().getLocation()));
-        timer.setInitialDelay(0);
-        timer.start();
+        Timer timer = new Timer("Mouse Pixel Debug", true);
+        timer.scheduleAtFixedRate(ForgeUtils.timerTask(() ->
+            System.out.println(MouseInfo.getPointerInfo().getLocation())),
+            0, 50);
     }
 }
