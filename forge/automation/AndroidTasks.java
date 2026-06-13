@@ -2,6 +2,8 @@ package forge.automation;
 
 import static forge.automation.AutomationConstants.ROBOT;
 
+import java.awt.event.InputEvent;
+
 import forge.ForgeUtils;
 
 /**
@@ -21,6 +23,52 @@ public final class AndroidTasks
     private AndroidTasks() {}
 
     /**
+     * Closes all apps by swiping upward to view all open apps and then clicking "Close All".
+     */
+    public static void closeAllApps()
+    {
+        //swipe up to view all open apps
+        Mouse.move(0.500, 0.990);
+        ROBOT.delay(500);
+        ROBOT.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        ROBOT.delay(100);
+        Mouse.move(0.500, 0.800);
+        ROBOT.delay(350);
+        ROBOT.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+        ROBOT.delay(250);
+
+        //click on "Close All"
+        Mouse.leftClick(0.500, 0.874);
+    }
+
+    /**
+     * Opens an app by swiping upwards to open the search screen, clicking "Search", typing the given app name, and selecting it.
+     *
+     * The phone must already be on the user's home screen.
+     *
+     * @param appName The name of the app to open
+     */
+    public static void openApp(String appName)
+    {
+        //swipe up to open the search screen
+        Mouse.move(0.500, 0.844);
+        ROBOT.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        ROBOT.delay(10);
+        Mouse.move(0.500, 0.457);
+        ROBOT.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+
+        //click the search bar at the bottom and paste the app to search for
+        copyToClipboard(appName);
+        Mouse.leftClick(0.500, 0.943);
+        ROBOT.delay(250);
+        Keyboard.paste();
+        ROBOT.delay(750);
+
+        //click on the app to open it
+        Mouse.leftClick(0.411, 0.151);
+    }
+
+    /**
      * Copies the given text to the device's clipboard.
      *
      * When using scrcpy, the clipboard is shared between the PC and the device, but it appears a non-scrcpy window must first
@@ -38,34 +86,5 @@ public final class AndroidTasks
         ROBOT.delay(250);
         ForgeUtils.setClipboard(text);
         ROBOT.delay(250);
-    }
-
-    /**
-     * A class with methods for using an Android keyboard.
-     *
-     * This class uses the Samsung Galaxy's standard keyboard layout.
-     */
-    public static final class Keyboard
-    {
-        /**
-         * A private constructor to prevent non-static use of this class.
-         */
-        private Keyboard() {}
-
-        /**
-         * Clicks the next/done button (only available when filling in forms or fields).
-         */
-        public static void next()
-        {
-            Mouse.leftClick(0.607, 0.906);
-        }
-
-        /**
-         * Clicks the close button (an upside-down caret symbol, e.g. "v").
-         */
-        public static void close()
-        {
-            Mouse.leftClick(0.591, 0.972);
-        }
     }
 }
